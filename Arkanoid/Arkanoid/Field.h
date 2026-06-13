@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "Brick.h"
+#include <SFML/Graphics.hpp>
+
+class Brick;
 
 class Field {
 private:
@@ -12,10 +14,10 @@ public:
     Field();
     void initLevel();
     void draw(sf::RenderWindow& window);
-    std::vector<std::unique_ptr<Brick>>& getBricks() { return bricks; }
+    std::vector<std::unique_ptr<Brick>>& getBricks();
 
-    void activateExtraBottom() { extraBottomActive = true; }
-    bool isExtraBottomActive() const { return extraBottomActive; }
-    void deactivateExtraBottom() { extraBottomActive = false; }
-    sf::FloatRect getBottomBounds() const { return extraBottom.getGlobalBounds(); }
+    void activateExtraBottom();
+    bool isExtraBottomActive() const;
+    void deactivateExtraBottom();
+    sf::FloatRect getBottomBounds() const;
 };

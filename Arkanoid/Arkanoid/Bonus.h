@@ -2,17 +2,17 @@
 #include "Entity.h"
 
 class Bonus : public Entity {
-private:
+protected:
     sf::CircleShape shape;
-    int type;
-    bool active;
+    bool active = true;
 public:
-    Bonus(sf::Vector2f pos, int t);
+    Bonus(sf::Vector2f pos, sf::Color color);
+    virtual ~Bonus() = default;
     void update(float deltaTime) override;
     void draw(sf::RenderWindow& window) override;
     sf::FloatRect getBounds() const override;
 
-    bool isActive() const { return active; }
-    void deactivate() { active = false; }
-    int getType() const { return type; }
+    bool isActive() const;
+    void deactivate();
+    virtual void activateEffect(Game& game) override = 0;
 };

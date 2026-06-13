@@ -1,5 +1,7 @@
 #include "Field.h"
 #include "Config.h"
+#include "Brick.h"
+#include "BrickFactory.h"
 
 Field::Field() { initLevel(); }
 void Field::initLevel() {
@@ -13,8 +15,8 @@ void Field::initLevel() {
         for (int c = 0; c < 10; ++c) {
             float x = 2.5f + c * (BLOCK_WIDTH + BLOCK_PADDING);
             float y = 50.f + r * (BLOCK_HEIGHT + BLOCK_PADDING);
-            BlockType t = static_cast<BlockType>((r + c) % 5);
-            bricks.push_back(std::make_unique<Brick>(x, y, t));
+            int typeIndex = (r + c) % 5;
+            bricks.push_back(BrickFactory::createBrick(typeIndex, x, y));
         }
     }
 }
@@ -22,3 +24,8 @@ void Field::draw(sf::RenderWindow& window) {
     for (auto& brick : bricks) brick->draw(window);
     if (extraBottomActive) window.draw(extraBottom);
 }
+std::vector<std::unique_ptr<Brick>>& Field::getBricks() { return bricks; }
+void Field::activateExtraBottom() { extraBottomActive = true; }
+bool Field::isExtraBottomActive() const { return extraBottomActive; }
+void Field::deactivateExtraBottom() { extraBottomActive = false; }
+sf::FloatRect Field::getBottomBounds() const { return extraBottom.getGlobalBounds(); }

@@ -134,7 +134,17 @@
     <ClCompile Include="Arkanoid.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Bonus.cpp" />
+    <ClCompile Include="BonusBall.cpp" />
+    <ClCompile Include="BonusBottom.cpp" />
+    <ClCompile Include="BonusFactory.cpp" />
+    <ClCompile Include="BonusWide.cpp" />
     <ClCompile Include="Brick.cpp" />
+    <ClCompile Include="BrickBonus.cpp" />
+    <ClCompile Include="BrickDurability.cpp" />
+    <ClCompile Include="BrickFactory.cpp" />
+    <ClCompile Include="BrickIndestructible.cpp" />
+    <ClCompile Include="BrickNorm.cpp" />
+    <ClCompile Include="BrickSpeed.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Functions.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -143,7 +153,17 @@
   <ItemGroup>
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Bonus.h" />
+    <ClInclude Include="BonusBall.h" />
+    <ClInclude Include="BonusBottom.h" />
+    <ClInclude Include="BonusFactory.h" />
+    <ClInclude Include="BonusWide.h" />
     <ClInclude Include="Brick.h" />
+    <ClInclude Include="BrickBonus.h" />
+    <ClInclude Include="BrickDurability.h" />
+    <ClInclude Include="BrickFactory.h" />
+    <ClInclude Include="BrickIndestructible.h" />
+    <ClInclude Include="BrickNorm.h" />
+    <ClInclude Include="BrickSpeed.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Entity.h" />

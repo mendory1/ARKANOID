@@ -36,4 +36,10 @@ public:
     Game();
     ~Game();
     void run();
+
+    Racket& getRacket();
+    Field& getField();
+    void addBall(std::unique_ptr<Ball> ball);
+    void spawnRandomBonus(sf::Vector2f pos);
+    void accelerateActiveBalls();
 };

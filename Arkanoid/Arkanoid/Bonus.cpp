@@ -1,12 +1,10 @@
 #include "Bonus.h"
 #include "Config.h"
 
-Bonus::Bonus(sf::Vector2f pos, int t) : type(t), active(true) {
+Bonus::Bonus(sf::Vector2f pos, sf::Color color) : active(true) {
     shape.setRadius(8.f);
+    shape.setFillColor(color);
     shape.setPosition(pos);
-    if (type == 5) shape.setFillColor(sf::Color::Magenta);
-    else if (type == 6) shape.setFillColor(sf::Color::Yellow);
-    else shape.setFillColor(sf::Color::Cyan);
 }
 void Bonus::update(float deltaTime) {
     if (!active) return;
@@ -15,3 +13,5 @@ void Bonus::update(float deltaTime) {
 }
 void Bonus::draw(sf::RenderWindow& window) { if (active) window.draw(shape); }
 sf::FloatRect Bonus::getBounds() const { return shape.getGlobalBounds(); }
+bool Bonus::isActive() const { return active; }
+void Bonus::deactivate() { active = false; }

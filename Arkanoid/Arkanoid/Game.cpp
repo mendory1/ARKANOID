@@ -3,9 +3,10 @@
 #include "Ball.h"
 #include "Field.h"
 #include "Bonus.h"
+#include "BonusFactory.h"
+#include "Brick.h"
 #include "Config.h"
 #include "Collision.h"
-#include "Functions.h"
 #include <cmath>
 #include <string>
 
@@ -27,6 +28,14 @@ void Game::resetLevel() {
     balls.push_back(std::make_unique<Ball>(sf::Vector2f(WINDOW_WIDTH / 2.f, WINDOW_HEIGHT - 100.f), sf::Vector2f(BALL_SPEED / 1.4f, -BALL_SPEED / 1.4f)));
 }
 
+void Game::spawnRandomBonus(sf::Vector2f pos) {
+    bonuses.push_back(BonusFactory::createRandomBonus(pos));
+}
+
+void Game::accelerateActiveBalls() {
+    for (auto& ball : balls) { if (ball->isActive()) ball->multiplyVelocity(1.2f); }
+}
+
 void Game::processEvents() {
     while (const auto event = window.pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
@@ -37,13 +46,12 @@ void Game::processEvents() {
 
 bool Game::checkWinCondition() {
     for (const auto& brick : field->getBricks()) {
-        if (!brick->isDestroyed() && brick->getType() != BlockType::Indestructible) {
+        if (brick->isRequiredForWin() && !brick->isDestroyed()) {
             return false;
         }
     }
     return true;
 }
-
 void Game::update(float deltaTime) {
     if (isGameOver || isVictory) return;
 
@@ -98,22 +106,9 @@ void Game::handleCollisions() {
 
         for (auto& brick : field->getBricks()) {
             if (brick->isDestroyed()) continue;
-
             if (checkCollision(ball->getBounds(), brick->getBounds())) {
                 ball->bounceY();
-                brick->hit(score);
-
-                if (brick->isDestroyed()) {
-                    if (brick->getType() == BlockType::SpeedUp) ball->multiplyVelocity(1.2f);
-                    if (brick->getType() == BlockType::WithBonus) {
-                        int types[] = { 5, 6, 9 };
-                        int chosenType = types[getRandomNumber(0, 2)];
-                        bonuses.push_back(std::make_unique<Bonus>(
-                            sf::Vector2f(brick->getBounds().position.x + BLOCK_WIDTH / 2, brick->getBounds().position.y),
-                            chosenType
-                        ));
-                    }
-                }
+                brick->hit(score, *this);
                 break;
             }
         }
@@ -122,11 +117,7 @@ void Game::handleCollisions() {
     for (auto& bonus : bonuses) {
         if (bonus->isActive() && checkCollision(bonus->getBounds(), racket->getBounds())) {
             bonus->deactivate();
-            if (bonus->getType() == 5) racket->expand();
-            else if (bonus->getType() == 6) field->activateExtraBottom();
-            else if (bonus->getType() == 9) {
-                balls.push_back(std::make_unique<Ball>(sf::Vector2f(racket->getPosition().x + racket->getSize().x / 2.f, racket->getPosition().y - 20.f), sf::Vector2f(-BALL_SPEED / 1.2f, -BALL_SPEED / 1.2f), sf::Color::Red));
-            }
+            bonus->activateEffect(*this);
         }
     }
 }
@@ -136,7 +127,7 @@ void Game::drawPixelGameOver() {
     sf::RectangleShape pixel({ static_cast<float>(pSize), static_cast<float>(pSize) });
     pixel.setFillColor(sf::Color::Red);
 
-    auto drawChar = [&](const int grid[5][4], float startX, float startY) {
+    auto drawChar = [&](const std::vector<std::vector<int>>& grid, float startX, float startY) {
         for (int r = 0; r < 5; ++r) {
             for (int c = 0; c < 4; ++c) {
                 if (grid[r][c] == 1) {
@@ -147,14 +138,14 @@ void Game::drawPixelGameOver() {
         }
         };
 
-    const int G[5][4] = { {1,1,1,1},{1,0,0,0},{1,0,1,1},{1,0,0,1},{1,1,1,1} };
-    const int A[5][4] = { {0,1,1,0},{1,0,0,1},{1,1,1,1},{1,0,0,1},{1,0,0,1} };
-    const int M[5][4] = { {1,0,0,1},{1,1,1,1},{1,0,0,1},{1,0,0,1},{1,0,0,1} };
-    const int E[5][4] = { {1,1,1,1},{1,0,0,0},{1,1,1,0},{1,0,0,0},{1,1,1,1} };
+    std::vector<std::vector<int>> G = { {1,1,1,1},{1,0,0,0},{1,0,1,1},{1,0,0,1},{1,1,1,1} };
+    std::vector<std::vector<int>> A = { {0,1,1,0},{1,0,0,1},{1,1,1,1},{1,0,0,1},{1,0,0,1} };
+    std::vector<std::vector<int>> M = { {1,0,0,1},{1,1,1,1},{1,0,0,1},{1,0,0,1},{1,0,0,1} };
+    std::vector<std::vector<int>> E = { {1,1,1,1},{1,0,0,0},{1,1,1,0},{1,0,0,0},{1,1,1,1} };
 
-    const int O[5][4] = { {1,1,1,1},{1,0,0,1},{1,0,0,1},{1,0,0,1},{1,1,1,1} };
-    const int V[5][4] = { {1,0,0,1},{1,0,0,1},{1,0,0,1},{0,1,1,0},{0,1,1,0} };
-    const int R[5][4] = { {1,1,1,0},{1,0,0,1},{1,1,1,0},{1,0,1,0},{1,0,0,1} };
+    std::vector<std::vector<int>> O = { {1,1,1,1},{1,0,0,1},{1,0,0,1},{1,0,0,1},{1,1,1,1} };
+    std::vector<std::vector<int>> V = { {1,0,0,1},{1,0,0,1},{1,0,0,1},{0,1,1,0},{0,1,1,0} };
+    std::vector<std::vector<int>> R = { {1,1,1,0},{1,0,0,1},{1,1,1,0},{1,0,1,0},{1,0,0,1} };
 
     float centerX = WINDOW_WIDTH / 2.f - 80.f;
     float centerY = WINDOW_HEIGHT / 2.f - 40.f;
@@ -175,7 +166,7 @@ void Game::drawPixelWin() {
     sf::RectangleShape pixel({ static_cast<float>(pSize), static_cast<float>(pSize) });
     pixel.setFillColor(sf::Color::Green);
 
-    auto drawChar = [&](const int grid[5][4], float startX, float startY) {
+    auto drawChar = [&](const std::vector<std::vector<int>>& grid, float startX, float startY) {
         for (int r = 0; r < 5; ++r) {
             for (int c = 0; c < 4; ++c) {
                 if (grid[r][c] == 1) {
@@ -186,9 +177,9 @@ void Game::drawPixelWin() {
         }
         };
 
-    const int W[5][4] = { {1,0,0,1},{1,0,0,1},{1,0,0,1},{1,1,1,1},{1,0,0,1} };
-    const int I[5][4] = { {1,1,1,1},{0,1,1,0},{0,1,1,0},{0,1,1,0},{1,1,1,1} };
-    const int N[5][4] = { {1,0,0,1},{1,1,0,1},{1,0,1,1},{1,0,0,1},{1,0,0,1} };
+    std::vector<std::vector<int>> W = { {1,0,0,1},{1,0,0,1},{1,0,0,1},{1,1,1,1},{1,0,0,1} };
+    std::vector<std::vector<int>> I = { {1,1,1,1},{0,1,1,0},{0,1,1,0},{0,1,1,0},{1,1,1,1} };
+    std::vector<std::vector<int>> N = { {1,0,0,1},{1,1,0,1},{1,0,1,1},{1,0,0,1},{1,0,0,1} };
 
     float centerX = WINDOW_WIDTH / 2.f - 70.f;
     float centerY = WINDOW_HEIGHT / 2.f - 25.f;
@@ -258,3 +249,6 @@ void Game::run() {
         render();
     }
 }
+Racket& Game::getRacket() { return *racket; }
+Field& Game::getField() { return *field; }
+void Game::addBall(std::unique_ptr<Ball> ball) { balls.push_back(std::move(ball)); }

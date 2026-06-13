@@ -28,3 +28,10 @@ void Ball::update(float deltaTime) {
 }
 void Ball::draw(sf::RenderWindow& window) { if (active) window.draw(shape); }
 sf::FloatRect Ball::getBounds() const { return shape.getGlobalBounds(); }
+bool Ball::isActive() const { return active; }
+void Ball::deactivate() { active = false; }
+void Ball::bounceX() { velocity.x = -velocity.x; }
+void Ball::bounceY() { velocity.y = -velocity.y; }
+void Ball::setVelocity(sf::Vector2f vel) { velocity = vel; }
+void Ball::multiplyVelocity(float factor) { velocity *= factor; }
+sf::Vector2f Ball::getPosition() const { return shape.getPosition(); }

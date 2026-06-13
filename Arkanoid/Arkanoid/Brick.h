@@ -1,20 +1,18 @@
 #pragma once
 #include "Entity.h"
-#include "Config.h"
 
 class Brick : public Entity {
-private:
+protected:
     sf::RectangleShape shape;
-    BlockType type;
     int health;
     bool destroyed;
 public:
-    Brick(float x, float y, BlockType t);
+    Brick(float x, float y, sf::Color color, int hp = 1);
+    virtual ~Brick() = default;
     void update(float deltaTime) override;
     void draw(sf::RenderWindow& window) override;
     sf::FloatRect getBounds() const override;
-
-    bool isDestroyed() const { return destroyed; }
-    BlockType getType() const { return type; }
-    void hit(int& score);
+    bool isDestroyed() const;
+    virtual void hit(int& score, Game& game);
+    virtual bool isRequiredForWin() const { return true; }
 };

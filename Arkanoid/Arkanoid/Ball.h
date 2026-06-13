@@ -12,12 +12,11 @@ public:
     void draw(sf::RenderWindow& window) override;
     sf::FloatRect getBounds() const override;
 
-    bool isActive() const { return active; }
-    void deactivate() { active = false; }
-    void bounceX() { velocity.x = -velocity.x; }
-    void bounceY() { velocity.y = -velocity.y; }
-    void setVelocity(sf::Vector2f vel) { velocity = vel; }
-    void multiplyVelocity(float factor) { velocity *= factor; }
-    sf::Vector2f getPosition() const { return shape.getPosition(); }
-    void setPosition(sf::Vector2f pos) { shape.setPosition(pos); }
+    bool isActive() const;
+    void deactivate();
+    void bounceX();
+    void bounceY();
+    void setVelocity(sf::Vector2f vel);
+    void multiplyVelocity(float factor);
+    sf::Vector2f getPosition() const;
 };
