@@ -145,10 +145,13 @@
     <ClCompile Include="BrickIndestructible.cpp" />
     <ClCompile Include="BrickNorm.cpp" />
     <ClCompile Include="BrickSpeed.cpp" />
+    <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="CollisionSystem.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Functions.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Racket.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
@@ -165,12 +168,14 @@
     <ClInclude Include="BrickNorm.h" />
     <ClInclude Include="BrickSpeed.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="CollisionSystem.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Racket.h" />
+    <ClInclude Include="RenderSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
